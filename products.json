@@ -1,0 +1,29 @@
+[
+ {
+  "id": 1,
+  "title": "Nuevo producto",
+  "description": "Descripción",
+  "price": 10.99,
+  "thumbnails": "imagen.jpg",
+  "code": "ABCPerro43",
+  "stock": 10
+ },
+ {
+  "id": 2,
+  "title": "Nuevo producto",
+  "description": "Descripción",
+  "price": 10.99,
+  "thumbnails": "imagen.jpg",
+  "code": "ABCPerro47",
+  "stock": 10
+ },
+ {
+  "id": 4,
+  "title": "Nuevo producto",
+  "description": "Descripción",
+  "price": 10.99,
+  "thumbnails": "imagen.jpg",
+  "code": "ABCPerro454",
+  "stock": 10
+ }
+]
