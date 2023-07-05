@@ -1,4 +1,4 @@
-import ProductManager from "./index.js";
+import ProductManager from "./src/index.js";
 
 const newProductManager = new ProductManager("./products.json");
 newProductManager.addProducts(
