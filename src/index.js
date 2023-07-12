@@ -1,96 +1,98 @@
 import fs from "fs";
 
 export default class ProductManager {
- #path;
+    #path;
 
- constructor(path) {
-  this.#path = path;
- }
+    constructor(path) {
+        this.#path = path;
+    }
 
- async addProducts(
-  title,
-  description,
-  price,
-  thumbnails,
-  code,
-  stock,
-  category,
-  status
- ) {
-  const prods = await this.getProducts();
+    async addProducts(
+        title,
+        description,
+        price,
+        thumbnails,
+        code,
+        stock,
+        category,
+        productStatus
+    ) {
+        const prods = await this.getProducts();
 
-  const newProd = {
-   id: prods.length ? prods[prods.length - 1].id + 1 : 1,
-   title,
-   description,
-   price,
-   thumbnails,
-   code,
-   stock,
-   category,
-   status,
-  };
+        const newProd = {
+            id: prods.length ? prods[prods.length - 1].id + 1 : 1,
+            title,
+            description,
+            price,
+            thumbnails,
+            code,
+            stock,
+            category,
+            status: productStatus,
+        };
 
-  const validar = await prods.some(
-   (producto) => newProd.code === producto.code
-  );
+        const validar = await prods.some(
+            (producto) => newProd.code === producto.code
+        );
 
-  if (validar) {
-   console.error("El producto ya existe");
-  } else {
-   const updateProd = [...prods, newProd];
+        if (validar) {
+            console.error("El producto ya existe");
+        } else {
+            const updateProd = [...prods, newProd];
 
-   await fs.promises.writeFile(this.#path, JSON.stringify(updateProd));
-  }
- }
+            await fs.promises.writeFile(this.#path, JSON.stringify(updateProd));
+        }
+    }
 
- async getProducts() {
-  try {
-   const prods = await fs.promises.readFile(this.#path, "utf-8");
+    async getProducts() {
+        try {
+            const prods = await fs.promises.readFile(this.#path, "utf-8");
 
-   return JSON.parse(prods);
-  } catch (err) {
-   return [];
-  }
- }
+            return JSON.parse(prods);
+        } catch (err) {
+            return [];
+        }
+    }
 
- async getProductById(idBuscar) {
-  try {
-   const prods = await this.getProducts();
+    async getProductById(idBuscar) {
+        try {
+            const prods = await this.getProducts();
 
-   const buscarProdById = await prods.find((prod) => prod.id == idBuscar);
+            const buscarProdById = await prods.find((prod) => prod.id == idBuscar);
 
-   return buscarProdById;
-  } catch (err) {
-   return [];
-  }
- }
+            return buscarProdById;
+        } catch (err) {
+            return [];
+        }
+    }
 
- async updateProd(id, prop, dato) {
-  try {
-   const prods = await this.getProducts();
+    async updateProd(id, prop, dato) {
+        try {
+            const prods = await this.getProducts();
 
-   const buscarProd = await prods.filter((prod) => prod.id === id);
+            const buscarProd = await prods.filter((prod) => prod.id == id);
 
-   buscarProd[0][prop] = dato;
+            buscarProd[0][prop] = dato;
 
-   await fs.promises.writeFile(this.#path, JSON.stringify(prods));
-  } catch (err) {
-   console.error("No se pudo actualizar");
-  }
- }
+            await fs.promises.writeFile(this.#path, JSON.stringify(prods));
 
- async deleteProducts(idEliminar) {
-  try {
-   const prods = await this.getProducts();
+            return 'Actualiazo correctamente'
+        } catch (err) {
+            console.error("No se pudo actualizar");
+        }
+    }
 
-   const eliminarProd = prods.filter((prod) => prod.id != idEliminar);
+    async deleteProducts(idEliminar) {
+        try {
+            const prods = await this.getProducts();
 
-   await fs.promises.writeFile(this.#path, JSON.stringify(eliminarProd));
+            const eliminarProd = prods.filter((prod) => prod.id != idEliminar);
 
-   return "Producto eliminado";
-  } catch (err) {
-   console.error("No se pudo eliminar");
-  }
- }
+            await fs.promises.writeFile(this.#path, JSON.stringify(eliminarProd));
+
+            return "Producto eliminado";
+        } catch (err) {
+            console.error("No se pudo eliminar");
+        }
+    }
 }
