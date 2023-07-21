@@ -1,11 +1,36 @@
 import express from "express";
 import ProductManager from "./index.js";
 import ClassManager from "./cartManager.js";
+import { Server } from "socket.io";
+import viewsRouter from "./routes/views.routes.js";
+import { engine } from "express-handlebars";
+import { __dirname } from "./utils.js";
+import path from "path";
+import helpers from "handlebars-helpers";
+import { allowInsecurePrototypeAccess } from "@handlebars/allow-prototype-access";
+import Handlebars from "handlebars";
+
+import prods from "../products.json" assert { type: "json" };
 
 const app = express();
 app.use(express.json());
 const newProductManager = new ProductManager("./products.json");
 const newCartManager = new ClassManager("./carts.json");
+
+app.use("/api/prueba", viewsRouter);
+
+app.engine(
+    "handlebars",
+    engine({
+        handlebars: allowInsecurePrototypeAccess(Handlebars),
+        helpers: helpers,
+        defaultLayout: "main",
+    })
+);
+app.set("view engine", "handlebars");
+app.set("views", path.join(__dirname + "/views"));
+
+app.use(express.static(__dirname + "/../public"));
 
 app.get("/api/products", async (req, res) => {
     const limitNumber = req.query.limit;
@@ -86,4 +111,20 @@ app.post('/api/carts/:cid/products/:pid', async (req, res) => {
 
 app.listen(8080, () => {
     console.log("Servidor 8080");
+});
+
+const httpServer = app.listen(8000, () => {
+    console.log("Server On");
+});
+
+const socketServer = new Server(httpServer);
+
+socketServer.on("connection", (socket) => {
+    console.log("New Client");
+
+    socket.on("message", (data) => {
+        console.log(data);
+    });
+
+    socket.emit("productos_update", prods);
 });
